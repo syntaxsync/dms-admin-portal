@@ -12,11 +12,11 @@ const RouterConfig = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="app" element={<Dashboard />}>
+          <Route path="app">
             <PrivateRoute
-              isAuth={true}
-              path="account"
-              // component={<Login />}
+              isAuth={false}
+              path="/account"
+              Component={<Dashboard />}
               redirectTo="/login"
             />
           </Route>

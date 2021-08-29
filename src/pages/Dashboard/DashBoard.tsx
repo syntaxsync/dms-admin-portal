@@ -3,7 +3,7 @@ import React from "react";
 export interface DashboardProps {}
 
 const Dashboard: React.SFC<DashboardProps> = () => {
-  return <div></div>;
+  return <div>This is Protected Route</div>;
 };
 
 export default Dashboard;
