@@ -1,28 +1,30 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard/DashBoard";
 import PrivateRoute from "./ProtectedRoute";
+import { AuthContext } from "../App";
 
 const RouterConfig = () => {
   return (
-    <div>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="app">
+    <AuthContext.Consumer>
+      {({ isAuth }) => {
+        console.log(isAuth);
+        return (
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <PrivateRoute
-              isAuth={false}
-              path="/account"
+              isAuth={isAuth}
+              path="/"
               Component={<Dashboard />}
               redirectTo="/login"
             />
-          </Route>
-        </Routes>
-      </Router>
-    </div>
+          </Routes>
+        );
+      }}
+    </AuthContext.Consumer>
   );
 };
 

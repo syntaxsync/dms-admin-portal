@@ -1,57 +1,96 @@
-import { Form, Input, Button, Checkbox } from "antd";
+import { useContext } from "react";
+import { Form, Input, Button, Checkbox, message, Card } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { NavLink as Link } from "react-router-dom";
+import { NavLink as Link, useNavigate } from "react-router-dom";
+
+import { AuthContext } from "../../App";
+import api from "../../interceptor/api";
 
 const Login = () => {
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+  const navigate = useNavigate();
+  const [form] = Form.useForm();
+  const { login } = useContext(AuthContext);
+
+  const onFinish = async (values: any) => {
+    try {
+      const response = await api.post("/users/login", {
+        email: values.email,
+        password: values.password,
+      });
+
+      if (response) {
+        const { status, data } = response;
+
+        if (status === 200) {
+          login(data.data.user, data.accessToken, data.refreshToken);
+          message.success("Login Successful");
+          navigate("/");
+        }
+      } else {
+        message.error("Email or Password is Incorrect");
+      }
+    } catch (err) {
+      message.error(err.message);
+    }
   };
 
   return (
-    <Form
-      name="normal_login"
-      className="login-form"
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
+    <Card.Grid
+      hoverable={false}
+      style={{
+        width: "50%",
+      }}
     >
-      <Form.Item
-        name="username"
-        rules={[{ required: true, message: "Please input your Username!" }]}
+      <Form
+        form={form}
+        name="normal_login"
+        className="login-form"
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
       >
-        <Input
-          prefix={<UserOutlined className="site-form-item-icon" />}
-          placeholder="Username"
-        />
-      </Form.Item>
-      <Form.Item
-        name="password"
-        rules={[{ required: true, message: "Please input your Password!" }]}
-        hasFeedback
-      >
-        <Input
-          prefix={<LockOutlined className="site-form-item-icon" />}
-          type="password"
-          placeholder="Password"
-        />
-      </Form.Item>
-      <Form.Item>
-        <Form.Item name="remember" valuePropName="checked" noStyle>
-          <Checkbox>Remember me</Checkbox>
+        <Form.Item
+          name="email"
+          rules={[{ required: true, message: "Please input your Email!" }]}
+        >
+          <Input
+            prefix={<UserOutlined className="site-form-item-icon" />}
+            placeholder="Email"
+          />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: "Please input your Password!" }]}
+          hasFeedback
+        >
+          <Input
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder="Password"
+          />
+        </Form.Item>
+        <Form.Item>
+          <Form.Item name="remember" valuePropName="checked" noStyle>
+            <Checkbox>Remember me</Checkbox>
+          </Form.Item>
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="login-form-button"
+          >
+            Log in
+          </Button>
+          &nbsp;Or
+          <Link to="/register"> register now!</Link>
         </Form.Item>
 
         <Link to="/forgot-password" className="login-form-forgot">
           Forgot password
         </Link>
-      </Form.Item>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit" className="login-form-button">
-          Log in
-        </Button>
-        &nbsp;Or
-        <Link to="/register"> register now!</Link>
-      </Form.Item>
-    </Form>
+      </Form>
+    </Card.Grid>
   );
 };
 
