@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard/DashBoard";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import PrivateRoute from "./ProtectedRoute";
 import { AuthContext } from "../App";
 
@@ -15,6 +16,7 @@ const RouterConfig = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <PrivateRoute
               isAuth={isAuth}
               path="/"

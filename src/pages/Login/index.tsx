@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Form, Input, Button, Checkbox, message, Card } from "antd";
+import { Form, Input, Button, Checkbox, message, Card, Row, Col } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { NavLink as Link, useNavigate } from "react-router-dom";
 
@@ -35,62 +35,67 @@ const Login = () => {
   };
 
   return (
-    <Card.Grid
-      hoverable={false}
-      style={{
-        width: "50%",
-      }}
-    >
-      <Form
-        form={form}
-        name="normal_login"
-        className="login-form"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-      >
-        <Form.Item
-          name="email"
-          rules={[{ required: true, message: "Please input your Email!" }]}
-        >
-          <Input
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="Email"
-          />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: "Please input your Password!" }]}
-          hasFeedback
-        >
-          <Input
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            type="password"
-            placeholder="Password"
-          />
-        </Form.Item>
-        <Form.Item>
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-        </Form.Item>
+    <Row gutter={32}>
+      <Col span={12} offset={6}>
+        <Card>
+          <Card.Grid style={{ width: "100%" }} hoverable={false}>
+            <Form
+              form={form}
+              name="normal_login"
+              className="login-form"
+              initialValues={{ remember: true }}
+              onFinish={onFinish}
+            >
+              <Form.Item
+                name="email"
+                rules={[
+                  { required: true, message: "Please input your Email!" },
+                ]}
+              >
+                <Input
+                  prefix={<UserOutlined className="site-form-item-icon" />}
+                  placeholder="Email"
+                />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                rules={[
+                  { required: true, message: "Please input your Password!" },
+                ]}
+                hasFeedback
+              >
+                <Input
+                  prefix={<LockOutlined className="site-form-item-icon" />}
+                  type="password"
+                  placeholder="Password"
+                />
+              </Form.Item>
+              <Form.Item>
+                <Form.Item name="remember" valuePropName="checked" noStyle>
+                  <Checkbox>Remember me</Checkbox>
+                </Form.Item>
+              </Form.Item>
 
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-          >
-            Log in
-          </Button>
-          &nbsp;Or
-          <Link to="/register"> register now!</Link>
-        </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="login-form-button"
+                >
+                  Log in
+                </Button>
+                &nbsp;Or
+                <Link to="/register"> register now!</Link>
+              </Form.Item>
 
-        <Link to="/forgot-password" className="login-form-forgot">
-          Forgot password
-        </Link>
-      </Form>
-    </Card.Grid>
+              <Link to="/forgot-password" className="login-form-forgot">
+                Forgot password
+              </Link>
+            </Form>
+          </Card.Grid>
+        </Card>
+      </Col>
+    </Row>
   );
 };
 
