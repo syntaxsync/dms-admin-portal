@@ -15,7 +15,7 @@ const ResetPassword: FunctionComponent<ResetPasswordProps> = () => {
     confirmPassword: string;
   }) => {
     try {
-      const response = await api.post(`users/resetPassword/${token}`, values);
+      const response = await api.patch(`users/resetPassword/${token}`, values);
       if (response) {
         const { data } = response;
         if (data.status === "success") {
