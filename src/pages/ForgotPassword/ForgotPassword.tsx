@@ -1,28 +1,41 @@
 import React, { FunctionComponent } from "react";
-import { NavLink as Link } from "react-router-dom";
-import { Card, Col, Row, Form, Input, Button } from "antd";
+import { NavLink as Link, useNavigate } from "react-router-dom";
+import { Card, Col, Row, Form, Input, Button, message } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
+import api from "../../interceptor/api";
 
 interface ForgotPasswordProps {}
 
 const ForgotPassword: FunctionComponent<ForgotPasswordProps> = () => {
+  const navigate = useNavigate();
+
+  const onFinish = async (values: any) => {
+    try {
+      const response = await api.post("/users/forgotPassword", {
+        email: values.email,
+      });
+
+      if (response) {
+        const { data } = response;
+        if (data.status === "success") {
+          message.info(data.message);
+          navigate("/login");
+        }
+      } else {
+        message.error("Error: Please contact admin");
+      }
+    } catch (err) {
+      message.error(err.message);
+    }
+  };
+
   return (
     <Row gutter={24}>
       <Col offset={6} span={12}>
         <Card>
           <Card.Grid style={{ width: "100%" }}>
-            <Form {...formItemLayout}>
+            <Form onFinish={onFinish}>
               <Form.Item
                 name="email"
                 rules={[
