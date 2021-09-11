@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 
-import api from "../../interceptor/api";
+import api from "../../services/api/api";
 
 const { Title } = Typography;
 

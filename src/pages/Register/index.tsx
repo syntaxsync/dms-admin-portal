@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { NavLink as Link, useNavigate } from "react-router-dom";
 
-import api from "../../interceptor/api";
+import api from "../../services/api/api";
 import { AuthContext } from "../../App";
 
 const { Title } = Typography;

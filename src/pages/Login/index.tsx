@@ -16,7 +16,7 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { NavLink as Link, useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../../App";
-import api from "../../interceptor/api";
+import api from "../../services/api/api";
 
 const { Title } = Typography;
 
