@@ -1,8 +1,21 @@
-import { Form, Input, Row, Col, Card, Button, message } from "antd";
 import React, { FunctionComponent } from "react";
+import {
+  Form,
+  Input,
+  Row,
+  Col,
+  Card,
+  Button,
+  message,
+  Space,
+  Divider,
+  Typography,
+} from "antd";
 import { NavLink, useParams, useNavigate } from "react-router-dom";
 
 import api from "../../interceptor/api";
+
+const { Title } = Typography;
 
 interface ResetPasswordProps {}
 
@@ -31,88 +44,98 @@ const ResetPassword: FunctionComponent<ResetPasswordProps> = () => {
   };
 
   return (
-    <Row gutter={24}>
-      <Col offset={6} span={12}>
-        <Card>
-          <Card.Grid style={{ width: "100%" }}>
-            <Form
-              labelCol={{
-                xs: { span: 24 },
-                sm: { span: 8 },
-              }}
-              wrapperCol={{
-                xs: { span: 24 },
-                sm: { span: 16 },
-              }}
-              onFinish={onFinish}
-            >
-              <Form.Item
-                name="password"
-                label="Password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your password!",
-                  },
-                ]}
-                hasFeedback
-              >
-                <Input.Password />
-              </Form.Item>
-
-              <Form.Item
-                name="confirmPassword"
-                label="Confirm Password"
-                dependencies={["password"]}
-                hasFeedback
-                rules={[
-                  {
-                    required: true,
-                    message: "Please confirm your password!",
-                  },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || getFieldValue("password") === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error(
-                          "The two passwords that you entered do not match!"
-                        )
-                      );
-                    },
-                  }),
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-              <Form.Item
-                wrapperCol={{
-                  xs: {
-                    span: 24,
-                    offset: 0,
-                  },
-                  sm: {
-                    span: 16,
-                    offset: 8,
-                  },
+    <Space
+      size="large"
+      direction="vertical"
+      style={{ width: "100%", overflowX: "hidden", padding: 20 }}
+    >
+      <Row gutter={24}>
+        <Col offset={5} span={14}>
+          <Card>
+            <Card.Grid style={{ width: "100%" }}>
+              <Title className="text-center" level={2}>
+                Reset Password
+              </Title>
+              <Divider />
+              <Form
+                labelCol={{
+                  xs: { span: 24 },
+                  sm: { span: 8 },
                 }}
+                wrapperCol={{
+                  xs: { span: 24 },
+                  sm: { span: 16 },
+                }}
+                onFinish={onFinish}
               >
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="login-form-button"
+                <Form.Item
+                  name="password"
+                  label="Password"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your password!",
+                    },
+                  ]}
+                  hasFeedback
                 >
-                  Forgot Password
-                </Button>
-                &nbsp;Or&nbsp;
-                <NavLink to="/login">Login</NavLink>
-              </Form.Item>
-            </Form>
-          </Card.Grid>
-        </Card>
-      </Col>
-    </Row>
+                  <Input.Password />
+                </Form.Item>
+
+                <Form.Item
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  dependencies={["password"]}
+                  hasFeedback
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please confirm your password!",
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue("password") === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error(
+                            "The two passwords that you entered do not match!"
+                          )
+                        );
+                      },
+                    }),
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
+                <Form.Item
+                  wrapperCol={{
+                    xs: {
+                      span: 24,
+                      offset: 0,
+                    },
+                    sm: {
+                      span: 16,
+                      offset: 8,
+                    },
+                  }}
+                >
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="login-form-button"
+                  >
+                    Save Password
+                  </Button>
+                  &nbsp;Or&nbsp;
+                  <NavLink to="/login">Already have an account?</NavLink>
+                </Form.Item>
+              </Form>
+            </Card.Grid>
+          </Card>
+        </Col>
+      </Row>
+    </Space>
   );
 };
 

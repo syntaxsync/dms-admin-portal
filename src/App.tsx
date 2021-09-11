@@ -1,10 +1,16 @@
 import React, { createContext, useReducer } from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, NavLink as Link } from "react-router-dom";
+import { Layout, Typography } from "antd";
 import "antd/dist/antd.css";
 
+import Logo from "./resources/images/logo.png";
 import "./App.css";
 import RouterConfig from "./routes";
+
 import { User } from "./types/User";
+
+const { Title } = Typography;
+const { Header, Content, Footer } = Layout;
 
 type ReducerStateType = {
   user: User | null;
@@ -56,11 +62,26 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <AuthContext.Provider
-          value={{ user: state.user, isAuth: state.isAuth, login }}
-        >
-          <RouterConfig />
-        </AuthContext.Provider>
+        <Layout style={{ minHeight: "100vh" }}>
+          <Header className="header">
+            <Link to="/">
+              <img src={Logo} width={55} height={55} alt="DM Systems" />
+              <Title level={2} style={{ display: "inline" }}>
+                DM Systems
+              </Title>
+            </Link>
+          </Header>
+          <Content>
+            <AuthContext.Provider
+              value={{ user: state.user, isAuth: state.isAuth, login }}
+            >
+              <RouterConfig />
+            </AuthContext.Provider>
+          </Content>
+          <Footer style={{ textAlign: "center" }}>
+            DM System ©2021 Created by Team Developer X
+          </Footer>
+        </Layout>
       </Router>
     </div>
   );

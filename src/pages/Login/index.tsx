@@ -1,10 +1,24 @@
 import { useContext } from "react";
-import { Form, Input, Button, Checkbox, message, Card, Row, Col } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Checkbox,
+  message,
+  Card,
+  Row,
+  Col,
+  Space,
+  Typography,
+  Divider,
+} from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { NavLink as Link, useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../../App";
 import api from "../../interceptor/api";
+
+const { Title } = Typography;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -35,67 +49,77 @@ const Login = () => {
   };
 
   return (
-    <Row gutter={32}>
-      <Col span={12} offset={6}>
-        <Card>
-          <Card.Grid style={{ width: "100%" }} hoverable={false}>
-            <Form
-              form={form}
-              name="normal_login"
-              className="login-form"
-              initialValues={{ remember: true }}
-              onFinish={onFinish}
-            >
-              <Form.Item
-                name="email"
-                rules={[
-                  { required: true, message: "Please input your Email!" },
-                ]}
+    <Space
+      size="middle"
+      direction="vertical"
+      style={{ width: "100%", overflowX: "hidden", padding: 20 }}
+    >
+      <Row gutter={24}>
+        <Col span={12} offset={6}>
+          <Card hoverable={true}>
+            <Card.Grid style={{ width: "100%" }} hoverable={false}>
+              <Title style={{ textAlign: "center" }} level={2}>
+                Login
+              </Title>
+              <Divider />
+              <Form
+                form={form}
+                name="normal_login"
+                className="login-form"
+                initialValues={{ remember: true }}
+                onFinish={onFinish}
               >
-                <Input
-                  prefix={<UserOutlined className="site-form-item-icon" />}
-                  placeholder="Email"
-                />
-              </Form.Item>
-              <Form.Item
-                name="password"
-                rules={[
-                  { required: true, message: "Please input your Password!" },
-                ]}
-                hasFeedback
-              >
-                <Input
-                  prefix={<LockOutlined className="site-form-item-icon" />}
-                  type="password"
-                  placeholder="Password"
-                />
-              </Form.Item>
-              <Form.Item>
-                <Form.Item name="remember" valuePropName="checked" noStyle>
-                  <Checkbox>Remember me</Checkbox>
-                </Form.Item>
-              </Form.Item>
-
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="login-form-button"
+                <Form.Item
+                  name="email"
+                  rules={[
+                    { required: true, message: "Please input your Email!" },
+                  ]}
                 >
-                  Log in
-                </Button>
-                &nbsp;Or
-                <Link to="/register"> register now!</Link>
-              </Form.Item>
+                  <Input
+                    prefix={<UserOutlined className="site-form-item-icon" />}
+                    placeholder="Email"
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="password"
+                  rules={[
+                    { required: true, message: "Please input your Password!" },
+                  ]}
+                  hasFeedback
+                >
+                  <Input
+                    prefix={<LockOutlined className="site-form-item-icon" />}
+                    type="password"
+                    placeholder="Password"
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Form.Item name="remember" valuePropName="checked" noStyle>
+                    <Checkbox>Remember me</Checkbox>
+                  </Form.Item>
+                </Form.Item>
 
-              <Link to="/forgot-password" className="login-form-forgot">
-                Forgot password
-              </Link>
-            </Form>
-          </Card.Grid>
-        </Card>
-      </Col>
-    </Row>
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="login-form-button"
+                  >
+                    Log in
+                  </Button>
+                  &nbsp;Or
+                  <Link to="/register"> register now!</Link>
+                </Form.Item>
+
+                <Link to="/forgot-password" className="login-form-forgot">
+                  Forgot password
+                </Link>
+              </Form>
+            </Card.Grid>
+          </Card>
+        </Col>
+      </Row>
+    </Space>
   );
 };
 
