@@ -13,7 +13,7 @@ import {
 } from "antd";
 import { NavLink, useParams, useNavigate } from "react-router-dom";
 
-import api from "../../interceptor/api";
+import api from "../../services/api/api";
 
 const { Title } = Typography;
 
