@@ -2,8 +2,8 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { Row, Col } from "antd";
 
-import Login from "../pages/Login";
-import Register from "../pages/Register";
+import Login from "../pages/Login/Login";
+import Register from "../pages/Register/Register";
 import Dashboard from "../pages/Dashboard/DashBoard";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import PrivateRoute from "./ProtectedRoute";

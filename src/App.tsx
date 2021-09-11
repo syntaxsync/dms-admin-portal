@@ -1,10 +1,10 @@
 import React, { createContext, useReducer } from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Layout } from "antd";
 import "antd/dist/antd.css";
 
 import "./App.css";
-import RouterConfig from "./routes";
+import RouterConfig from "./routes/Routes";
 import PageHeader from "./components/PageHeader";
 
 import { User } from "./types/User";
@@ -24,12 +24,14 @@ type AuthType = {
     refreshToken: string,
     rememberMe: boolean
   ) => void | null;
+  logout: () => void;
 };
 
 const AuthInitialState: AuthType = {
   user: JSON.parse(localStorage.getItem("user")),
   isAuth: JSON.parse(localStorage.getItem("user")) && true,
   login: null,
+  logout: null,
 };
 
 const ReducerInitalState: ReducerStateType = {
@@ -47,6 +49,12 @@ const AuthReducer = (state, action) => {
         user: action.payload.user,
         isAuth: action.payload.isAuth,
       };
+    case "LOGOUT":
+      return {
+        ...state,
+        user: null,
+        isAuth: false,
+      };
     default:
       return null;
   }
@@ -54,6 +62,7 @@ const AuthReducer = (state, action) => {
 
 function App() {
   const [state, dispatch] = useReducer(AuthReducer, ReducerInitalState);
+  const navigate = useNavigate();
 
   const login = (user, token, refreshToken, rememberMe) => {
     if (rememberMe) {
@@ -66,27 +75,33 @@ function App() {
       sessionStorage.setItem("refreshToken", refreshToken);
     }
     dispatch({ type: "LOGIN", payload: { user, isAuth: true } });
+    navigate("/");
+  };
+
+  const logout = () => {
+    console.log("logout");
+    localStorage.clear();
+    dispatch({ type: "LOGOUT" });
+    navigate("/login");
   };
 
   return (
     <div className="App">
-      <Router>
-        <Layout style={{ minHeight: "100vh" }}>
-          <PageHeader />
-          <Content>
-            <AuthContext.Provider
-              value={{ user: state.user, isAuth: state.isAuth, login }}
-            >
-              <RouterConfig />
-            </AuthContext.Provider>
-          </Content>
-          {ReducerInitalState.isAuth || (
-            <Footer style={{ textAlign: "center" }}>
-              DM System ©2021 Created by Team Developer X
-            </Footer>
-          )}
-        </Layout>
-      </Router>
+      <Layout style={{ minHeight: "100vh" }}>
+        <PageHeader />
+        <Content>
+          <AuthContext.Provider
+            value={{ user: state.user, isAuth: state.isAuth, login, logout }}
+          >
+            <RouterConfig />
+          </AuthContext.Provider>
+        </Content>
+        {ReducerInitalState.isAuth || (
+          <Footer style={{ textAlign: "center" }}>
+            DM System ©2021 Created by Team Developer X
+          </Footer>
+        )}
+      </Layout>
     </div>
   );
 }
