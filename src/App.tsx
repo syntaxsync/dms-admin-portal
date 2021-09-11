@@ -80,9 +80,11 @@ function App() {
               <RouterConfig />
             </AuthContext.Provider>
           </Content>
-          <Footer style={{ textAlign: "center" }}>
-            DM System ©2021 Created by Team Developer X
-          </Footer>
+          {ReducerInitalState.isAuth || (
+            <Footer style={{ textAlign: "center" }}>
+              DM System ©2021 Created by Team Developer X
+            </Footer>
+          )}
         </Layout>
       </Router>
     </div>
