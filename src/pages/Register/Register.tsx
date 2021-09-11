@@ -13,7 +13,7 @@ import {
   Typography,
   Divider,
 } from "antd";
-import { NavLink as Link, useNavigate } from "react-router-dom";
+import { NavLink as Link } from "react-router-dom";
 
 import api from "../../services/api/api";
 import { AuthContext } from "../../App";
@@ -48,7 +48,6 @@ const tailFormItemLayout = {
 
 const Register: React.SFC<RegisterProps> = () => {
   const [form] = Form.useForm();
-  const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
   const onFinish = async (values: any) => {
@@ -60,12 +59,9 @@ const Register: React.SFC<RegisterProps> = () => {
         confirmPassword: values.confirmPassword,
       });
 
-      console.log(response);
-
       if (response) {
         const { data } = response;
         login(data.user, data.accessToken, data.refreshToken, true);
-        navigate("/");
       } else {
         message.error("Please Fill All Feilds");
       }
@@ -170,7 +166,6 @@ const Register: React.SFC<RegisterProps> = () => {
                 </Form.Item>
 
                 <Form.Item
-                  initialValue="student"
                   name="role"
                   label="Role"
                   rules={[
@@ -180,7 +175,7 @@ const Register: React.SFC<RegisterProps> = () => {
                     },
                   ]}
                 >
-                  <Select>
+                  <Select placeholder="Please select your role">
                     <Option value="student">Student</Option>
                     <Option value="teacher">Teacher</Option>
                   </Select>

@@ -13,7 +13,7 @@ import {
   Divider,
 } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { NavLink as Link, useNavigate } from "react-router-dom";
+import { NavLink as Link } from "react-router-dom";
 
 import { AuthContext } from "../../App";
 import api from "../../services/api/api";
@@ -21,7 +21,6 @@ import api from "../../services/api/api";
 const { Title } = Typography;
 
 const Login = () => {
-  const navigate = useNavigate();
   const [form] = Form.useForm();
   const { login } = useContext(AuthContext);
 
@@ -43,7 +42,6 @@ const Login = () => {
             values.remember
           );
           message.success("Login Successful");
-          navigate("/");
         }
       } else {
         message.error("Email or Password is Incorrect");
@@ -79,6 +77,7 @@ const Login = () => {
                   rules={[
                     { required: true, message: "Please input your Email!" },
                   ]}
+                  hasFeedback
                 >
                   <Input
                     prefix={<UserOutlined className="site-form-item-icon" />}
@@ -92,7 +91,7 @@ const Login = () => {
                   ]}
                   hasFeedback
                 >
-                  <Input
+                  <Input.Password
                     prefix={<LockOutlined className="site-form-item-icon" />}
                     type="password"
                     placeholder="Password"

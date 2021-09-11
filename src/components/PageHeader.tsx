@@ -1,11 +1,13 @@
 import React, { FunctionComponent } from "react";
-import { Layout, Row, Col, Typography, Avatar } from "antd";
+import { Layout, Row, Col, Typography, Avatar, Menu } from "antd";
 import { NavLink as Link } from "react-router-dom";
 
 import Logo from "../resources/images/logo.png";
+import { AuthContext } from "../App";
 
 const { Header } = Layout;
 const { Title } = Typography;
+const { SubMenu } = Menu;
 
 interface PageHeaderProps {}
 
@@ -27,9 +29,43 @@ const PageHeader: FunctionComponent<PageHeaderProps> = () => {
             </Row>
           </Link>
         </Col>
-        <Col span={8} offset={8} className="text-right">
-          <Avatar>U</Avatar>
-        </Col>
+        <AuthContext.Consumer>
+          {({ isAuth, logout }) => {
+            return (
+              <Col span={16} className="text-right">
+                <Menu style={{ float: "right" }} mode="horizontal" theme="dark">
+                  {isAuth ? (
+                    <SubMenu
+                      key="SubMenu"
+                      icon={<Avatar>U</Avatar>}
+                      title="Navigation Three - Submenu"
+                    >
+                      <Menu.Item key="setting:1">Option 1</Menu.Item>
+                      <Menu.Item
+                        key="logout"
+                        onClick={() => {
+                          console.log("triggering");
+                          console.log(logout);
+                        }}
+                      >
+                        Log out
+                      </Menu.Item>
+                    </SubMenu>
+                  ) : (
+                    <>
+                      <Menu.Item key="login">
+                        <Link to="/register">Register</Link>
+                      </Menu.Item>
+                      <Menu.Item key="register">
+                        <Link to="/login">Login</Link>
+                      </Menu.Item>
+                    </>
+                  )}
+                </Menu>
+              </Col>
+            );
+          }}
+        </AuthContext.Consumer>
       </Row>
     </Header>
   );
