@@ -17,7 +17,7 @@ const Dashboard: React.SFC<DashboardProps> = () => {
   return (
     <Layout style={{ minHeight: "calc(100vh - 64px)" }}>
       <Sider
-        width={200}
+        width={250}
         className="site-layout-background"
         style={{ minHeight: "calc(100vh - 64px)" }}
       >

@@ -64,7 +64,7 @@ const Register: React.SFC<RegisterProps> = () => {
 
       if (response) {
         const { data } = response;
-        login(data.user, data.accessToken, data.refreshToken);
+        login(data.user, data.accessToken, data.refreshToken, true);
         navigate("/");
       } else {
         message.error("Please Fill All Feilds");

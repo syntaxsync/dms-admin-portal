@@ -36,7 +36,12 @@ const Login = () => {
         const { status, data } = response;
 
         if (status === 200) {
-          login(data.data.user, data.accessToken, data.refreshToken);
+          login(
+            data.data.user,
+            data.accessToken,
+            data.refreshToken,
+            values.remember
+          );
           message.success("Login Successful");
           navigate("/");
         }
