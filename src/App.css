@@ -10,3 +10,9 @@
 #components-form-demo-normal-login .login-form-button {
   width: 100%;
 }
+.text-center {
+  text-align: center !important;
+}
+.text-right {
+  text-align: right !important;
+}
