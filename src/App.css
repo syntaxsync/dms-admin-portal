@@ -16,3 +16,7 @@
 .text-right {
   text-align: right !important;
 }
+
+.ant-layout-header {
+  padding: 0 40px;
+}

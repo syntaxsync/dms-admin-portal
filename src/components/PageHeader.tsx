@@ -1,12 +1,11 @@
 import React, { FunctionComponent } from "react";
-import { Layout, Row, Col, Typography, Avatar, Menu } from "antd";
+import { Layout, Row, Col, Avatar, Menu } from "antd";
 import { NavLink as Link } from "react-router-dom";
 
-import Logo from "../resources/images/logo.png";
+import Logo from "../resources/images/dm-system-logo-min.png";
 import { AuthContext } from "../App";
 
 const { Header } = Layout;
-const { Title } = Typography;
 const { SubMenu } = Menu;
 
 interface PageHeaderProps {}
@@ -15,27 +14,19 @@ const PageHeader: FunctionComponent<PageHeaderProps> = () => {
   return (
     <Header className="header">
       <Row gutter={24} justify="space-around" align="middle">
-        <Col span={8} offset={0}>
+        <Col style={{ padding: 0 }} span={8} offset={0}>
           <Link to="/">
-            <Row justify="space-around" align="middle">
-              <Col span={6}>
-                <img src={Logo} width={55} height={55} alt="DM Systems" />
-              </Col>
-              <Col span={18}>
-                <Title level={4} style={{ display: "inline", color: "#fff" }}>
-                  DM Systems
-                </Title>
-              </Col>
-            </Row>
+            <img src={Logo} width={"auto"} height={45} alt="DM Systems" />
           </Link>
         </Col>
         <AuthContext.Consumer>
           {({ isAuth, logout, user }) => {
             return (
-              <Col span={16} className="text-right">
+              <Col style={{ padding: 0 }} span={16} className="text-right">
                 <Menu style={{ float: "right" }} mode="horizontal" theme="dark">
                   {isAuth ? (
                     <SubMenu
+                      style={{ padding: 0 }}
                       key="SubMenu"
                       icon={<Avatar>{user.name[0]}</Avatar>}
                       title={user.name}
