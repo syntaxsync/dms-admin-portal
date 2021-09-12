@@ -57,11 +57,12 @@ const Register: React.SFC<RegisterProps> = () => {
         email: values.email,
         password: values.password,
         confirmPassword: values.confirmPassword,
+        role: values.role,
       });
 
       if (response) {
         const { data } = response;
-        login(data.user, data.accessToken, data.refreshToken, true);
+        login(data.data.user, data.accessToken, data.refreshToken, true);
       } else {
         message.error("Please Fill All Feilds");
       }
