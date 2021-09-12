@@ -30,24 +30,17 @@ const PageHeader: FunctionComponent<PageHeaderProps> = () => {
           </Link>
         </Col>
         <AuthContext.Consumer>
-          {({ isAuth, logout }) => {
+          {({ isAuth, logout, user }) => {
             return (
               <Col span={16} className="text-right">
                 <Menu style={{ float: "right" }} mode="horizontal" theme="dark">
                   {isAuth ? (
                     <SubMenu
                       key="SubMenu"
-                      icon={<Avatar>U</Avatar>}
-                      title="Navigation Three - Submenu"
+                      icon={<Avatar>{user.name[0]}</Avatar>}
+                      title={user.name}
                     >
-                      <Menu.Item key="setting:1">Option 1</Menu.Item>
-                      <Menu.Item
-                        key="logout"
-                        onClick={() => {
-                          console.log("triggering");
-                          console.log(logout);
-                        }}
-                      >
+                      <Menu.Item key="logout" onClick={logout}>
                         Log out
                       </Menu.Item>
                     </SubMenu>

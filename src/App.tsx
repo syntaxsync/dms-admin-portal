@@ -87,21 +87,21 @@ function App() {
 
   return (
     <div className="App">
-      <Layout style={{ minHeight: "100vh" }}>
-        <PageHeader />
-        <Content>
-          <AuthContext.Provider
-            value={{ user: state.user, isAuth: state.isAuth, login, logout }}
-          >
+      <AuthContext.Provider
+        value={{ user: state.user, isAuth: state.isAuth, login, logout }}
+      >
+        <Layout style={{ minHeight: "100vh" }}>
+          <PageHeader />
+          <Content>
             <RouterConfig />
-          </AuthContext.Provider>
-        </Content>
-        {ReducerInitalState.isAuth || (
-          <Footer style={{ textAlign: "center" }}>
-            DM System ©2021 Created by Team Developer X
-          </Footer>
-        )}
-      </Layout>
+          </Content>
+          {ReducerInitalState.isAuth || (
+            <Footer style={{ textAlign: "center" }}>
+              DM System ©2021 Created by Team Developer X
+            </Footer>
+          )}
+        </Layout>
+      </AuthContext.Provider>
     </div>
   );
 }
