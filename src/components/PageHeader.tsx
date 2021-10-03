@@ -31,6 +31,9 @@ const PageHeader: FunctionComponent<PageHeaderProps> = () => {
                       icon={<Avatar>{user.name[0]}</Avatar>}
                       title={user.name}
                     >
+                      <Menu.Item key="profile">
+                        <Link to="/profile">Profile</Link>
+                      </Menu.Item>
                       <Menu.Item key="logout" onClick={logout}>
                         Log out
                       </Menu.Item>

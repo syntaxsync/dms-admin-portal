@@ -10,6 +10,9 @@ import PrivateRoute from "./ProtectedRoute";
 import { AuthContext } from "../App";
 import ResetPassword from "../pages/ResetPassword/ResetPassword";
 import { Empty } from "antd";
+import Profile from "../pages/Profile/Profile";
+import Degree from "../pages/Degree/Degree";
+import Joining from "../pages/Joining/Joining";
 
 const RouterConfig = () => {
   return (
@@ -27,7 +30,13 @@ const RouterConfig = () => {
               path="/"
               Component={<Dashboard />}
               redirectTo="/login"
-            />
+            >
+              <>
+                <Route path="profile" element={<Profile />} />
+                <Route path="my-degree" element={<Degree />} />
+                <Route path="join-courses" element={<Joining />} />
+              </>
+            </PrivateRoute>
             <Route
               path="*"
               element={
