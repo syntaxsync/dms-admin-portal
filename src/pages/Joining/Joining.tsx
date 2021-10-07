@@ -55,8 +55,9 @@ const Joining: FunctionComponent<JoiningProps> = () => {
     const result = coursesPicked.filter(
       (cour) => cour.code === selectedCourse.code
     );
-    if (!result) {
-      setCoursesPicked((state) => [...state, JSON.parse(course)]);
+    console.log(result);
+    if (result.length === 0) {
+      setCoursesPicked((state) => [...state, selectedCourse]);
     } else {
       message.error("Course already selected");
     }
@@ -90,8 +91,18 @@ const Joining: FunctionComponent<JoiningProps> = () => {
       <Content>
         <Title level={2}>Join Courses</Title>
 
-        <Form onFinish={addJoining}>
-          <Form.Item name="course" label="Course">
+        <Form
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          onFinish={addJoining}
+        >
+          <Form.Item
+            name="course"
+            label="Course"
+            rules={[
+              { required: true, message: "Please Select a course to add" },
+            ]}
+          >
             <Select>
               {offerings?.map((offering) =>
                 offering?.offerings?.map((offer) => {
