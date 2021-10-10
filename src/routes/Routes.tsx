@@ -7,25 +7,28 @@ import Register from "../pages/Register/Register";
 import Dashboard from "../pages/Dashboard/DashBoard";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import PrivateRoute from "./ProtectedRoute";
+import PrivateRouteWithChildrens from "./ProtectedRouteWithChildrens";
 import { AuthContext } from "../App";
 import ResetPassword from "../pages/ResetPassword/ResetPassword";
 import { Empty } from "antd";
 import Profile from "../pages/Profile/Profile";
 import Degree from "../pages/Degree/Degree";
 import Joining from "../pages/Joining/Joining";
+import DegreeList from "../pages/DegreeList/DegreeList";
+import AddDegree from "../pages/DegreeDetails/DegreeDetails";
+import CreateNewDegree from "../pages/CreateDegree/CreateNewDegree";
 
 const RouterConfig = () => {
   return (
     <AuthContext.Consumer>
-      {({ isAuth }) => {
-        console.log(isAuth);
+      {({ isAuth, user }) => {
         return (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <PrivateRoute
+            <PrivateRouteWithChildrens
               isAuth={isAuth}
               path="/"
               Component={<Dashboard />}
@@ -33,10 +36,52 @@ const RouterConfig = () => {
             >
               <>
                 <Route path="profile" element={<Profile />} />
-                <Route path="my-degree" element={<Degree />} />
-                <Route path="join-courses" element={<Joining />} />
+                <PrivateRoute
+                  isAuth={isAuth}
+                  allowedRoles={["student"]}
+                  role={user?.role}
+                  path="my-degree"
+                  Component={<Degree />}
+                  redirectTo="/login"
+                />
+                <PrivateRoute
+                  isAuth={isAuth}
+                  path="join-courses"
+                  allowedRoles={["student"]}
+                  role={user?.role}
+                  Component={<Joining />}
+                  redirectTo="/login"
+                />
+
+                <Route path="degree-list">
+                  <PrivateRoute
+                    allowedRoles={["admin"]}
+                    isAuth={isAuth}
+                    path="/"
+                    Component={<DegreeList />}
+                    redirectTo="/login"
+                    role={user?.role}
+                  />
+                  <PrivateRoute
+                    allowedRoles={["admin"]}
+                    isAuth={isAuth}
+                    path=":code"
+                    Component={<AddDegree />}
+                    redirectTo="/login"
+                    role={user?.role}
+                  />
+
+                  <PrivateRoute
+                    allowedRoles={["admin"]}
+                    isAuth={isAuth}
+                    path="add"
+                    Component={<CreateNewDegree />}
+                    redirectTo="/login"
+                    role={user?.role}
+                  />
+                </Route>
               </>
-            </PrivateRoute>
+            </PrivateRouteWithChildrens>
             <Route
               path="*"
               element={

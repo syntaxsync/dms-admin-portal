@@ -15,6 +15,7 @@ import {
   Form,
   Select,
   Button,
+  Descriptions,
 } from "antd";
 import { AuthContext } from "../../App";
 import api from "../../services/api/api";
@@ -52,14 +53,18 @@ const Joining: FunctionComponent<JoiningProps> = () => {
 
   const addJoining = ({ course }) => {
     const selectedCourse = JSON.parse(course);
-    const result = coursesPicked.filter(
+    console.log(selectedCourse);
+    const result = coursesPicked.find(
       (cour) => cour.code === selectedCourse.code
     );
-    console.log(result);
-    if (result.length === 0) {
-      setCoursesPicked((state) => [...state, selectedCourse]);
-    } else {
+
+    if (result) {
       message.error("Course already selected");
+    } else {
+      setCoursesPicked((state) => [
+        ...state,
+        { ...selectedCourse, key: selectedCourse.code },
+      ]);
     }
   };
 
@@ -92,48 +97,61 @@ const Joining: FunctionComponent<JoiningProps> = () => {
         <Title level={2}>Join Courses</Title>
 
         <Form
+          labelAlign="left"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           onFinish={addJoining}
         >
-          <Form.Item
-            name="course"
-            label="Course"
-            rules={[
-              { required: true, message: "Please Select a course to add" },
-            ]}
-          >
-            <Select>
-              {offerings?.map((offering) =>
-                offering?.offerings?.map((offer) => {
-                  return (
-                    <Select.OptGroup
-                      key={`${offer._id}-${offer.semester}`}
-                      label={`${offer.semester}`}
-                    >
-                      {offer.courses.map((course: Course, index: number) => (
-                        <Select.Option
-                          key={`${offer._id}-${course.code}-${index}`}
-                          value={JSON.stringify(course)}
-                          disabled={coursesPicked.includes(
-                            (selectedCourse) =>
-                              selectedCourse._id === course._id
-                          )}
+          <Row>
+            <Col xs={{ offset: 0, span: 8 }}>
+              <Form.Item
+                name="course"
+                label="Course"
+                rules={[
+                  { required: true, message: "Please Select a course to add" },
+                ]}
+              >
+                <Select>
+                  {offerings?.map((offering) =>
+                    offering?.offerings?.map((offer) => {
+                      return (
+                        <Select.OptGroup
+                          key={`${offer._id}-${offer.semester}`}
+                          label={`${offer.semester}`}
                         >
-                          {course.title} - {course.code}
-                        </Select.Option>
-                      ))}
-                    </Select.OptGroup>
-                  );
-                })
-              )}
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Join Course
-            </Button>
-          </Form.Item>
+                          {offer.courses.map(
+                            (course: Course, index: number) => (
+                              <Select.Option
+                                key={`${offer._id}-${course.code}-${index}`}
+                                value={JSON.stringify(course)}
+                                disabled={coursesPicked.includes(
+                                  (selectedCourse) =>
+                                    selectedCourse._id === course._id
+                                )}
+                              >
+                                {course.title} - {course.code}
+                              </Select.Option>
+                            )
+                          )}
+                        </Select.OptGroup>
+                      );
+                    })
+                  )}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={{ offset: 1, span: 8 }}>
+              <Form.Item>
+                <Button
+                  disabled={coursesPicked.length >= 6}
+                  type="primary"
+                  htmlType="submit"
+                >
+                  Join Course
+                </Button>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
 
         <Row>
@@ -164,6 +182,30 @@ const Joining: FunctionComponent<JoiningProps> = () => {
               dataSource={coursesPicked}
               pagination={false}
             />
+            <Descriptions
+              style={{
+                marginTop: "1rem",
+              }}
+            >
+              <Descriptions.Item
+                style={{ width: "50%" }}
+                label="Total Credit Hours &nbsp; (max: 20)"
+              >
+                {coursesPicked.reduce(
+                  (total, course) => course.creditHours + total,
+                  0
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item
+                style={{ width: "50%" }}
+                label="Total Courses Joined"
+              >
+                {coursesPicked.length}
+              </Descriptions.Item>
+            </Descriptions>
+            <Button type="primary" onClick={() => console.log("Hello")}>
+              Submit Joining
+            </Button>
           </Col>
         </Row>
       </Content>

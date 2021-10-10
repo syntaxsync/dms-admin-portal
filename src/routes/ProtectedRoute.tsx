@@ -6,7 +6,8 @@ export interface PrivateRouteType {
   redirectTo: string;
   isAuth: Boolean;
   path: string;
-  children: ReactElement<any, any>;
+  role: string;
+  allowedRoles: string[];
 }
 
 const PrivateRoute = ({
@@ -14,17 +15,19 @@ const PrivateRoute = ({
   redirectTo,
   isAuth,
   path,
-  children,
+  allowedRoles,
+  role,
   ...props
 }: PrivateRouteType) => {
   if (!isAuth) {
     return <Navigate to={redirectTo} />;
   }
-  return (
-    <Route {...props} path={path} element={Component}>
-      {children}
-    </Route>
-  );
+
+  if (!allowedRoles.includes(role)) {
+    return <Navigate to="/" />;
+  }
+
+  return <Route {...props} path={path} element={Component} />;
 };
 
 export default PrivateRoute;
