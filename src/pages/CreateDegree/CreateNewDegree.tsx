@@ -1,9 +1,19 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
-import { Button, Form, Input, Layout, message, Transfer } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Layout,
+  message,
+  Transfer,
+  Typography,
+} from "antd";
+import { useNavigate } from "react-router";
 import api from "../../services/api/api";
 import { useForm } from "antd/lib/form/Form";
 
 const { Content } = Layout;
+const { Title } = Typography;
 
 interface CreateNewDegreeProps {}
 
@@ -28,11 +38,12 @@ const calculateCreditHours = (
 };
 
 const CreateNewDegree: FunctionComponent<CreateNewDegreeProps> = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState<Course[]>([]);
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
   const [form] = useForm();
 
-  const onChange = (nextTargetKeys, direction, moveKeys) => {
+  const onChange = (nextTargetKeys) => {
     form.setFieldsValue({
       creditHours: calculateCreditHours(courses, nextTargetKeys),
     });
@@ -41,9 +52,10 @@ const CreateNewDegree: FunctionComponent<CreateNewDegreeProps> = () => {
 
   const onSubmit = async (values) => {
     try {
-      const { data: response } = await api.post("/degrees", values);
-      console.log(response);
+      await api.post("/degrees", values);
       message.success(`Degree created successfully!`);
+      form.resetFields();
+      navigate("/degree-list");
     } catch (err) {
       message.error(err.message);
     }
@@ -73,11 +85,15 @@ const CreateNewDegree: FunctionComponent<CreateNewDegreeProps> = () => {
   return (
     <Layout>
       <Content>
+        <Title style={{ textAlign: "center" }} level={2}>
+          Add New Degree
+        </Title>
         <Form
           form={form}
           onFinish={onSubmit}
           labelCol={{ xs: { span: 8 } }}
           wrapperCol={{ xs: { span: 16 } }}
+          labelAlign="left"
         >
           <Form.Item
             name="title"

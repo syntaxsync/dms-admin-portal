@@ -6,5 +6,5 @@ export type Degree = {
   title: string;
   code: string;
   creditHours: number;
-  course: [Course];
+  courses: [Course];
 };

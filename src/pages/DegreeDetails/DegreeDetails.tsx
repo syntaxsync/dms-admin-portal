@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import {
   Descriptions,
   Layout,
+  message,
   Table,
   TableColumnsType,
   Typography,
@@ -46,17 +47,20 @@ interface AddDegreeProps {}
 const AddDegree: FunctionComponent<AddDegreeProps> = () => {
   const { code } = useParams();
 
-  console.log(code);
   const [degree, setDegree] = useState<Degree | undefined>();
 
   useEffect(() => {
     const fetchDegree = async () => {
-      const { data: response } = await api.get(`/degrees/${code}`);
+      try {
+        const { data: response } = await api.get(`/degrees/${code}`);
 
-      if (response.status === "Success") {
-        const { doc } = response.data;
-        console.log(doc);
-        setDegree(doc);
+        if (response.status === "Success") {
+          const { doc } = response.data;
+          console.log(doc);
+          setDegree(doc);
+        }
+      } catch (err) {
+        message.error(err.message);
       }
     };
 
@@ -81,7 +85,7 @@ const AddDegree: FunctionComponent<AddDegreeProps> = () => {
         <Table
           pagination={{ pageSize: 20 }}
           columns={columns}
-          dataSource={degree?.course.map((cour) => ({
+          dataSource={degree?.courses.map((cour) => ({
             ...cour,
             key: cour._id,
           }))}

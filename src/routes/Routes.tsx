@@ -17,6 +17,9 @@ import Joining from "../pages/Joining/Joining";
 import DegreeList from "../pages/DegreeList/DegreeList";
 import AddDegree from "../pages/DegreeDetails/DegreeDetails";
 import CreateNewDegree from "../pages/CreateDegree/CreateNewDegree";
+import DepartmentList from "../pages/Department/DepartmentList";
+import AddNewDepartment from "../pages/Department/AddNewDepartment";
+import Offerings from "../pages/Offerings/Offerings";
 
 const RouterConfig = () => {
   return (
@@ -76,6 +79,37 @@ const RouterConfig = () => {
                     isAuth={isAuth}
                     path="add"
                     Component={<CreateNewDegree />}
+                    redirectTo="/login"
+                    role={user?.role}
+                  />
+                </Route>
+
+                <Route path="departments">
+                  <PrivateRoute
+                    allowedRoles={["admin"]}
+                    isAuth={isAuth}
+                    path="/"
+                    Component={<DepartmentList />}
+                    redirectTo="/login"
+                    role={user?.role}
+                  />
+
+                  <PrivateRoute
+                    allowedRoles={["admin"]}
+                    isAuth={isAuth}
+                    path="add"
+                    Component={<AddNewDepartment />}
+                    redirectTo="/login"
+                    role={user?.role}
+                  />
+                </Route>
+
+                <Route path="offerings">
+                  <PrivateRoute
+                    allowedRoles={["admin", "teacher", "student"]}
+                    isAuth={isAuth}
+                    path="/"
+                    Component={<Offerings />}
                     redirectTo="/login"
                     role={user?.role}
                   />
