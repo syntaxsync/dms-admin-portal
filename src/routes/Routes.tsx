@@ -20,6 +20,9 @@ import CreateNewDegree from "../pages/CreateDegree/CreateNewDegree";
 import DepartmentList from "../pages/Department/DepartmentList";
 import AddNewDepartment from "../pages/Department/AddNewDepartment";
 import Offerings from "../pages/Offerings/Offerings";
+import DetailsOffering from "../pages/Offerings/DetailsOfferings";
+import AddOfferings from "../pages/Offerings/AddOfferings";
+import ManageJoinings from "../pages/ManageJoinings/ManageJoinings";
 
 const RouterConfig = () => {
   return (
@@ -110,6 +113,33 @@ const RouterConfig = () => {
                     isAuth={isAuth}
                     path="/"
                     Component={<Offerings />}
+                    redirectTo="/login"
+                    role={user?.role}
+                  />
+                  <PrivateRoute
+                    allowedRoles={["admin", "teacher", "student"]}
+                    isAuth={isAuth}
+                    path="/:degreeId/:offeringId"
+                    Component={<DetailsOffering />}
+                    redirectTo="/login"
+                    role={user?.role}
+                  />
+                  <PrivateRoute
+                    allowedRoles={["admin"]}
+                    isAuth={isAuth}
+                    path="/add"
+                    Component={<AddOfferings />}
+                    redirectTo="/login"
+                    role={user?.role}
+                  />
+                </Route>
+
+                <Route path="manage">
+                  <PrivateRoute
+                    allowedRoles={["admin"]}
+                    isAuth={isAuth}
+                    path="/joinings"
+                    Component={<ManageJoinings />}
                     redirectTo="/login"
                     role={user?.role}
                   />

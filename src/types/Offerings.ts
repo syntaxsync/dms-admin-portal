@@ -6,4 +6,6 @@ export type Offerings = {
   batch: string;
   degree: Degree;
   courses: [Course];
+  _id: string;
+  key: string;
 };

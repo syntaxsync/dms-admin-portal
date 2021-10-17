@@ -7,6 +7,7 @@ import {
   NotificationOutlined,
   BookOutlined,
   BlockOutlined,
+  DiffOutlined,
 } from "@ant-design/icons";
 import { Outlet } from "react-router";
 import { NavLink as Link } from "react-router-dom";
@@ -68,6 +69,18 @@ const Dashboard: React.SFC<DashboardProps> = () => {
                   >
                     <Menu.Item key="offerings_list">
                       <Link to="offerings">Offerings</Link>
+                    </Menu.Item>
+                    <Menu.Item key="add_offerings">
+                      <Link to="offerings/add">Add Offerings</Link>
+                    </Menu.Item>
+                  </SubMenu>
+                  <SubMenu
+                    key="manage_joinings"
+                    icon={<DiffOutlined />}
+                    title="Manage Joinings"
+                  >
+                    <Menu.Item key="approve_joining">
+                      <Link to="manage/joinings">Approve Joining</Link>
                     </Menu.Item>
                   </SubMenu>
                 </Menu>
