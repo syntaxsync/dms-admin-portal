@@ -19,6 +19,7 @@ import {
 import api from "../../services/api/api";
 
 import { AuthContext } from "../../App";
+import catchAsync from "../../utils/ErrorHandler";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -31,10 +32,10 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 
   useEffect(() => {
     const abortController = new AbortController();
-    const getProfileImage = async () => {
+    const getProfileImage = catchAsync(async () => {
       const { data } = await api.get(`files/${user.profilePicture}`);
       setImageSrc(data);
-    };
+    });
 
     getProfileImage();
 
@@ -85,57 +86,61 @@ const Profile: FunctionComponent<ProfileProps> = () => {
               </Select>
             </Form.Item>
 
-            {user.role === "teacher" ? (
-              <Fragment>
-                <Form.Item
-                  name="employeeId"
-                  label="Employee Id"
-                  initialValue={
-                    user.data.type === "teacher" && user.data.employeeId
-                  }
-                >
-                  <Input disabled />
-                </Form.Item>
+            {user.role !== "admin" &&
+              (user.role === "teacher" ? (
+                <Fragment>
+                  <Form.Item
+                    name="employeeId"
+                    label="Employee Id"
+                    initialValue={
+                      user.data.type === "teacher" && user.data.employeeId
+                    }
+                  >
+                    <Input disabled />
+                  </Form.Item>
 
-                <Form.Item
-                  name="designation"
-                  label="Designation"
-                  initialValue={
-                    user.data.type === "teacher" && user.data.designation
-                  }
-                >
-                  <Input disabled />
-                </Form.Item>
-              </Fragment>
-            ) : (
-              <Fragment>
-                <Form.Item
-                  label="Batch"
-                  name="batch"
-                  initialValue={user.data.type === "student" && user.data.batch}
-                >
-                  <Input type="number" disabled />
-                </Form.Item>
-                <Form.Item
-                  name="degree"
-                  label="Degree"
-                  initialValue={
-                    user.data.type === "student" && user.data.degree.title
-                  }
-                >
-                  <Input disabled />
-                </Form.Item>
-                <Form.Item
-                  name="registrationNumber"
-                  label="Registration Number"
-                  initialValue={
-                    user.data.type === "student" && user.data.registrationNumber
-                  }
-                >
-                  <Input disabled />
-                </Form.Item>
-              </Fragment>
-            )}
+                  <Form.Item
+                    name="designation"
+                    label="Designation"
+                    initialValue={
+                      user.data.type === "teacher" && user.data.designation
+                    }
+                  >
+                    <Input disabled />
+                  </Form.Item>
+                </Fragment>
+              ) : (
+                <Fragment>
+                  <Form.Item
+                    label="Batch"
+                    name="batch"
+                    initialValue={
+                      user.data.type === "student" && user.data.batch
+                    }
+                  >
+                    <Input type="number" disabled />
+                  </Form.Item>
+                  <Form.Item
+                    name="degree"
+                    label="Degree"
+                    initialValue={
+                      user.data.type === "student" && user.data.degree.title
+                    }
+                  >
+                    <Input disabled />
+                  </Form.Item>
+                  <Form.Item
+                    name="registrationNumber"
+                    label="Registration Number"
+                    initialValue={
+                      user.data.type === "student" &&
+                      user.data.registrationNumber
+                    }
+                  >
+                    <Input disabled />
+                  </Form.Item>
+                </Fragment>
+              ))}
             <Form.Item wrapperCol={{ offset: 8 }}>
               <Button type="primary" htmlType="submit">
                 Save
