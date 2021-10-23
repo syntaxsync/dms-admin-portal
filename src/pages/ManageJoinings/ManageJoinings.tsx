@@ -1,3 +1,4 @@
+import { DownloadOutlined } from "@ant-design/icons";
 import {
   Space,
   Typography,
@@ -5,15 +6,17 @@ import {
   Table,
   TableColumnsType,
   Tag,
+  Image,
   Popconfirm,
+  Button,
+  message,
 } from "antd";
-import { off } from "process";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { NavLink as Link } from "react-router-dom";
 
 import api from "../../services/api/api";
 import { Department } from "../../types/Department";
-import { Offerings } from "../../types/Offerings";
+import { Joining } from "../../types/Joining";
 import catchAsync from "../../utils/ErrorHandler";
 
 const { Title, Link: AntLink } = Typography;
@@ -21,59 +24,122 @@ const { OptGroup, Option } = Select;
 
 interface ManageJoiningsProps {}
 
-const columns: TableColumnsType<Offerings> = [
-  {
-    title: "Batch",
-    dataIndex: "batch",
-  },
-  {
-    title: "Courses",
-    render: (value, record) => {
-      return record.courses.map((course) => (
-        <Tag key={course._id}>{course.title}</Tag>
-      ));
-    },
-  },
-  {
-    title: "Semester",
-    dataIndex: "semester",
-  },
-  {
-    title: "Degree",
-    render: (value, record) => {
-      return (
-        <Link to={`/degree-list/${record.degree.code}`}>
-          {record.degree.title}
-        </Link>
-      );
-    },
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
-  },
-  {
-    title: "Change Status",
-    render: (record, value) => {
-      return (
-        <Space direction="horizontal">
-          <Popconfirm title="are you sure to approve joining?">
-            <AntLink>Approve</AntLink>
-          </Popconfirm>
-          <Popconfirm title="are you sure to reject joining?">
-            <AntLink type="danger">Reject</AntLink>
-          </Popconfirm>
-        </Space>
-      );
-    },
-  },
-];
-
 const ManageJoinings: FunctionComponent<ManageJoiningsProps> = () => {
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [offerings, setOfferings] = useState<Offerings[]>([]);
+  const [joinings, setJoinings] = useState<Joining[]>([]);
   const [selectedDegree, setSelectedDegree] = useState<string>();
 
+  const changeStatus = catchAsync(
+    async (id: string, degree: string, status: string, student: string) => {
+      const { data: response } = await api.patch(
+        `degrees/${degree}/joinings/${id}/update-status/${status}`
+      );
+
+      setJoinings(
+        joinings.map((joining) => {
+          if (joining._id === id) {
+            return response.data.joining;
+          } else {
+            return joining;
+          }
+        })
+      );
+
+      message.success(`Joining is updated successfully`);
+    }
+  );
+
+  const columns: TableColumnsType<Joining> = [
+    {
+      title: "Batch",
+      dataIndex: "batch",
+    },
+    {
+      title: "Student Name",
+      render: (text, record) => record?.student?.name,
+    },
+    {
+      title: "Reg. No",
+      render: (text, record) => {
+        record.student.data.type = "student";
+
+        if (record.student.data.type === "student") {
+          return record.student.data.registrationNumber;
+        }
+      },
+    },
+    {
+      title: "Courses",
+      render: (value, record) => {
+        return record.courses.map((course) => (
+          <Tag key={course._id}>{course.title}</Tag>
+        ));
+      },
+    },
+    {
+      title: "Semester",
+      dataIndex: "semester",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+    },
+    {
+      title: "Challan Photo",
+      render: (value, record) => {
+        return (
+          <Button
+            onClick={async () => {
+              const { data } = await api.get(`files/${record.challanPhoto}`);
+              const downloadBtn = document.createElement("a");
+              downloadBtn.href = data;
+              document.body.appendChild(downloadBtn);
+              downloadBtn.click();
+              document.body.removeChild(downloadBtn);
+            }}
+            icon={<DownloadOutlined />}
+          >
+            Download
+          </Button>
+        );
+      },
+    },
+    {
+      title: "Change Status",
+      render: (record, value) => {
+        return (
+          <Space direction="horizontal">
+            <Popconfirm
+              onConfirm={() =>
+                changeStatus(
+                  value._id,
+                  value.degree._id,
+                  "Approved",
+                  value.student.name
+                )
+              }
+              title="are you sure to approve joining?"
+            >
+              <AntLink>Approve</AntLink>
+            </Popconfirm>
+            <Popconfirm
+              onConfirm={() =>
+                changeStatus(
+                  value._id,
+                  value.degree._id,
+                  "Rejected",
+                  value.student.name
+                )
+              }
+              title="are you sure to reject joining?"
+            >
+              <AntLink type="danger">Reject</AntLink>
+            </Popconfirm>
+          </Space>
+        );
+      },
+    },
+  ];
   useEffect(() => {
     const fetchDegrees = catchAsync(async () => {
       const { data: response } = await api.get("departments");
@@ -90,7 +156,12 @@ const ManageJoinings: FunctionComponent<ManageJoiningsProps> = () => {
         `degrees/${selectedDegree}/joinings`
       );
 
-      setOfferings(response.data.joinings);
+      setJoinings(
+        response.data.joinings.map((joining: Joining) => ({
+          ...joining,
+          key: joining._id,
+        }))
+      );
     });
 
     selectedDegree && fetchJoinings();
@@ -118,7 +189,7 @@ const ManageJoinings: FunctionComponent<ManageJoiningsProps> = () => {
 
       <Table
         columns={columns}
-        dataSource={offerings.map((offering) => ({
+        dataSource={joinings.map((offering) => ({
           ...offering,
           key: offering._id,
         }))}
