@@ -17,7 +17,7 @@ const Degree: FunctionComponent<DegreeProps> = () => {
           {({ user }) => {
             if (user.data.type === "student") {
               const courseByCategories = _.groupBy(
-                user?.data?.degree?.course,
+                user?.data?.degree?.courses,
                 (course) => course.category
               );
 

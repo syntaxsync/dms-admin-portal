@@ -8,76 +8,83 @@ import {
   Layout,
   message,
   Typography,
-  Table,
-  Collapse,
-  Row,
-  Col,
   Form,
-  Select,
+  Input,
   Button,
-  Descriptions,
+  Transfer,
+  Upload,
 } from "antd";
 import { AuthContext } from "../../App";
 import api from "../../services/api/api";
-import { Course } from "../../types/User";
+import { Offerings } from "../../types/Offerings";
+import { calculateCreditHours } from "../CreateDegree/CreateNewDegree";
+import catchAsync from "../../utils/ErrorHandler";
+
+import { InboxOutlined } from "@ant-design/icons";
 
 const { Content } = Layout;
-const { Panel } = Collapse;
 const { Title } = Typography;
-
-const columns = [
-  {
-    title: "Course Title",
-    dataIndex: "title",
-  },
-  {
-    title: "Course Code",
-    dataIndex: "code",
-  },
-  {
-    title: "Credit Hours",
-    dataIndex: "creditHours",
-  },
-  {
-    title: "Category",
-    dataIndex: "category",
-  },
-];
+const { Dragger } = Upload;
 
 interface JoiningProps {}
 
 const Joining: FunctionComponent<JoiningProps> = () => {
   const { user } = useContext(AuthContext);
-  const [offerings, setOfferings] = useState([]);
-  const [coursesPicked, setCoursesPicked] = useState([]);
+  const [form] = Form.useForm();
+  const [offerings, setOfferings] = useState<Offerings>(undefined);
+  const [targetKeys, setTargetKeys] = useState<string[]>([]);
+  const CURRENTDATE = new Date();
+  const CURRENTSEMESTER =
+    CURRENTDATE.getMonth() >= 1 && CURRENTDATE.getMonth() < 3
+      ? "SPR"
+      : CURRENTDATE.getMonth() > 6 && CURRENTDATE.getMonth() <= 9
+      ? "FALL"
+      : undefined;
 
-  const addJoining = ({ course }) => {
-    const selectedCourse = JSON.parse(course);
-    console.log(selectedCourse);
-    const result = coursesPicked.find(
-      (cour) => cour.code === selectedCourse.code
-    );
+  const onChange = (nextTargetKeys) => {
+    form.setFieldsValue({
+      creditHours: calculateCreditHours(
+        offerings.courses.map((course) => ({ ...course, key: course._id })),
+        nextTargetKeys
+      ),
+    });
 
-    if (result) {
-      message.error("Course already selected");
-    } else {
-      setCoursesPicked((state) => [
-        ...state,
-        { ...selectedCourse, key: selectedCourse.code },
-      ]);
-    }
+    setTargetKeys(nextTargetKeys);
   };
+
+  const onFinish = catchAsync(
+    async ({ courses, degree, semester, batch, challanPhoto }) => {
+      console.log(courses, degree, semester, batch, challanPhoto);
+      // const { data: response } = await api.post(`/degrees/${degree}/joinings`);
+    }
+  );
 
   useEffect(() => {
     const abort = new AbortController();
     const fetchOfferingForDegree = async () => {
       if (user?.data?.type === "student") {
         try {
-          const { data } = await api.get(
+          const { data: response } = await api.get(
             `/degrees/${user?.data?.degree?._id}/offerings`
           );
 
-          setOfferings(() => data?.data?.offerings);
+          const { offerings } = response.data;
+
+          const batchOffering = offerings.find((offering: Offerings) => {
+            return (
+              offering.semester.toUpperCase().includes(CURRENTSEMESTER) &&
+              offering.semester.includes(`${CURRENTDATE.getFullYear()}`) &&
+              user?.data?.type === "student" &&
+              offering?.batch === user?.data?.batch
+            );
+          });
+
+          setOfferings(batchOffering);
+
+          form.setFieldsValue({
+            batch: batchOffering.batch,
+            semester: batchOffering.semester,
+          });
         } catch (err) {
           message.error(err.message);
         }
@@ -89,125 +96,117 @@ const Joining: FunctionComponent<JoiningProps> = () => {
     return () => {
       abort.abort();
     };
-  }, [user]);
+  }, [CURRENTSEMESTER, user]);
+
+  const normFile = (e: any) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e && e.fileList;
+  };
 
   return (
     <Layout>
       <Content>
         <Title level={2}>Join Courses</Title>
 
-        <Form
-          labelAlign="left"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          onFinish={addJoining}
-        >
-          <Row>
-            <Col xs={{ offset: 0, span: 8 }}>
-              <Form.Item
-                name="course"
-                label="Course"
-                rules={[
-                  { required: true, message: "Please Select a course to add" },
-                ]}
-              >
-                <Select>
-                  {offerings?.map((offering) =>
-                    offering?.offerings?.map((offer) => {
-                      return (
-                        <Select.OptGroup
-                          key={`${offer._id}-${offer.semester}`}
-                          label={`${offer.semester}`}
-                        >
-                          {offer.courses.map(
-                            (course: Course, index: number) => (
-                              <Select.Option
-                                key={`${offer._id}-${course.code}-${index}`}
-                                value={JSON.stringify(course)}
-                                disabled={coursesPicked.includes(
-                                  (selectedCourse) =>
-                                    selectedCourse._id === course._id
-                                )}
-                              >
-                                {course.title} - {course.code}
-                              </Select.Option>
-                            )
-                          )}
-                        </Select.OptGroup>
-                      );
-                    })
-                  )}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col xs={{ offset: 1, span: 8 }}>
-              <Form.Item>
-                <Button
-                  disabled={coursesPicked.length >= 6}
-                  type="primary"
-                  htmlType="submit"
-                >
-                  Join Course
-                </Button>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-
-        <Row>
-          <Col sm={{ order: 0, span: 24 }} lg={{ order: 0, span: 11 }}>
-            <Title level={3}>Offerings</Title>
-            <Collapse>
-              {offerings?.map((offering) => {
-                return offering?.offerings?.map((offer) => {
-                  return (
-                    <Panel
-                      header={`Semester ${offer.semester}`}
-                      key={offer._id}
-                    >
-                      <Table columns={columns} dataSource={offer.courses} />
-                    </Panel>
-                  );
-                });
-              })}
-            </Collapse>
-          </Col>
-          <Col
-            sm={{ order: 1, span: 24 }}
-            lg={{ order: 1, span: 12, offset: 1 }}
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          <Form.Item
+            name="degree"
+            label="Degree"
+            initialValue={
+              user.data.type === "student" && user.data.degree.title
+            }
+            rules={[{ required: true, message: "Degree is required" }]}
           >
-            <Title level={3}>Selected Courses</Title>
-            <Table
-              columns={columns}
-              dataSource={coursesPicked}
-              pagination={false}
+            <Input
+              value={user.data.type === "student" && user.data.degree._id}
+              disabled
             />
-            <Descriptions
-              style={{
-                marginTop: "1rem",
-              }}
+          </Form.Item>
+
+          <Form.Item
+            name="semester"
+            label="Semester"
+            initialValue={offerings?.semester}
+            rules={[{ required: true, message: "Semester is required" }]}
+          >
+            <Input value={offerings?.semester} disabled />
+          </Form.Item>
+
+          <Form.Item
+            name="batch"
+            label="Batch"
+            rules={[{ required: true, message: "Batch is required" }]}
+            initialValue={offerings?.batch}
+          >
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item
+            name="challanPhoto"
+            label="Fee Challan Image"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+          >
+            <Dragger
+              action="/upload.do"
+              listType="picture"
+              accept="image/png,image/jpeg,image/jpg"
             >
-              <Descriptions.Item
-                style={{ width: "50%" }}
-                label="Total Credit Hours &nbsp; (max: 20)"
-              >
-                {coursesPicked.reduce(
-                  (total, course) => course.creditHours + total,
-                  0
-                )}
-              </Descriptions.Item>
-              <Descriptions.Item
-                style={{ width: "50%" }}
-                label="Total Courses Joined"
-              >
-                {coursesPicked.length}
-              </Descriptions.Item>
-            </Descriptions>
-            <Button type="primary" onClick={() => console.log("Hello")}>
-              Submit Joining
-            </Button>
-          </Col>
-        </Row>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-hint">
+                Support for a single upload. Upload Submitted Fee Challan Image.
+              </p>
+              <p className="ant-upload-text">
+                Click or drag file to this area to upload
+              </p>
+            </Dragger>
+          </Form.Item>
+
+          <Form.Item
+            name="creditHours"
+            label="Credit Hours"
+            initialValue={0}
+            rules={[
+              {
+                required: true,
+                message: "Credit Hours must be greater than 0",
+                type: "number",
+                min: 3,
+              },
+            ]}
+          >
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item
+            name="courses"
+            label="Courses"
+            rules={[{ required: true, message: "Courses is required" }]}
+          >
+            <Transfer
+              listStyle={{ flexBasis: "calc(50% - 20px)" }}
+              dataSource={offerings?.courses.map((course) => ({
+                ...course,
+                key: course._id,
+              }))}
+              titles={["Offered Courses", "Selected Courses"]}
+              targetKeys={targetKeys}
+              onChange={onChange}
+              render={(item) => {
+                return <span key={item.key}>{item.title}</span>;
+              }}
+              oneWay
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Button htmlType="submit">Add Joining</Button>
+          </Form.Item>
+        </Form>
       </Content>
     </Layout>
   );

@@ -1,3 +1,5 @@
+import { Degree } from "./Degree";
+
 export type Course = {
   _id: string;
   title: string;
@@ -5,14 +7,6 @@ export type Course = {
   creditHours: number;
   prerequisites: Course[];
   category: string;
-};
-
-export type Degree = {
-  title: string;
-  code: string;
-  creditHours: number;
-  course: Course[];
-  _id: string;
 };
 
 export type Teacher = {
@@ -24,9 +18,10 @@ export type Teacher = {
 
 export type Student = {
   type: "student";
-  batch: number;
+  batch: string;
   degree: Degree;
   registrationNumber: string;
+  currentSemester: string;
   courses: [];
 };
 

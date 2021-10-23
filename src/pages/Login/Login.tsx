@@ -34,8 +34,6 @@ const Login = () => {
       if (response) {
         const { status, data } = response;
 
-        console.log(data);
-
         if (data.data.user && data.data.user.data) {
           data.data.user.data.type = data.data.user.role;
         }

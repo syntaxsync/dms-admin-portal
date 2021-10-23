@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -17,9 +17,11 @@ import { NavLink as Link } from "react-router-dom";
 
 import api from "../../services/api/api";
 import { AuthContext } from "../../App";
+import catchAsync from "../../utils/ErrorHandler";
+import { Department } from "../../types/Department";
 
 const { Title } = Typography;
-const { Option } = Select;
+const { Option, OptGroup } = Select;
 
 export interface RegisterProps {}
 
@@ -47,10 +49,23 @@ const tailFormItemLayout = {
 };
 
 const Register: React.SFC<RegisterProps> = () => {
+  const [role, setRole] = useState<string>();
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [form] = Form.useForm();
   const { login } = useContext(AuthContext);
 
+  useEffect(() => {
+    const fetchDegrees = catchAsync(async () => {
+      const { data: response } = await api.get("departments");
+
+      setDepartments(response?.data?.docs);
+    });
+
+    fetchDegrees();
+  }, []);
+
   const onFinish = async (values: any) => {
+    console.log(values);
     try {
       const response = await api.post("/users/signup", {
         name: values.name,
@@ -62,7 +77,17 @@ const Register: React.SFC<RegisterProps> = () => {
 
       if (response) {
         const { data } = response;
-        login(data.data.user, data.accessToken, data.refreshToken, true);
+
+        localStorage.setItem("token", data.accessToken);
+
+        const { data: completeProfileResponse } = await api.post(
+          "/users/complete-profile",
+          values
+        );
+
+        const { user } = completeProfileResponse.data;
+
+        login(user, data.accessToken, data.refreshToken, true);
       } else {
         message.error("Please Fill All Feilds");
       }
@@ -176,11 +201,120 @@ const Register: React.SFC<RegisterProps> = () => {
                     },
                   ]}
                 >
-                  <Select placeholder="Please select your role">
+                  <Select
+                    onChange={(value: string) => setRole(value)}
+                    placeholder="Please select your role"
+                  >
                     <Option value="student">Student</Option>
                     <Option value="teacher">Teacher</Option>
                   </Select>
                 </Form.Item>
+
+                {role &&
+                  (role === "student" ? (
+                    <>
+                      <Form.Item
+                        name="degree"
+                        label="Degree"
+                        rules={[
+                          { required: true, message: "Degree is required" },
+                        ]}
+                      >
+                        <Select placeholder="Please Select the Degree">
+                          {departments.map((department) => (
+                            <OptGroup
+                              key={department?._id}
+                              label={department?.name}
+                            >
+                              {department?.degrees?.map((degree) => (
+                                <Option key={degree?._id} value={degree?._id}>
+                                  {degree?.title}
+                                </Option>
+                              ))}
+                            </OptGroup>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                      <Form.Item
+                        name="registrationNumber"
+                        label="Registration Number"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Registration Number is Required",
+                            min: 6,
+                            max: 20,
+                            type: "string",
+                          },
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+
+                      <Form.Item
+                        name="batch"
+                        label="Batch"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Batch is required",
+                            type: "string",
+                          },
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+
+                      <Form.Item
+                        name="currentSemester"
+                        label="Current Semester"
+                        rules={[
+                          {
+                            message: "Current Semester is required",
+                            required: true,
+                          },
+                        ]}
+                      >
+                        <Input type="number" />
+                      </Form.Item>
+                    </>
+                  ) : (
+                    <>
+                      <Form.Item
+                        name="employeeId"
+                        label="Employee ID"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Employee ID is required",
+                            type: "string",
+                          },
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                      <Form.Item
+                        name="designation"
+                        label="Designation"
+                        rules={[
+                          {
+                            required: true,
+                            type: "string",
+                            message: "Designation is required",
+                          },
+                        ]}
+                      >
+                        <Select placeholder="Please Select Designation">
+                          <Option value="Lecturer">Lecturer</Option>
+                          <Option value="Assistant Professor">
+                            Assistant Professor
+                          </Option>
+                          <Option value="Professor">Professor</Option>
+                          <Option value="HOD">HOD</Option>
+                        </Select>
+                      </Form.Item>
+                    </>
+                  ))}
 
                 <Form.Item
                   name="agreement"

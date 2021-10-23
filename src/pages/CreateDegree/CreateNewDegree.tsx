@@ -25,7 +25,7 @@ type Course = {
   creditHours: number;
 };
 
-const calculateCreditHours = (
+export const calculateCreditHours = (
   courses: Course[],
   selectedCourses: string[]
 ): number => {
