@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://api-dmsystem.herokuapp.com/api/v1",
+  baseURL: "http://localhost:8000/api/v1",
   timeout: 100000,
 });
 
@@ -29,8 +29,7 @@ api.interceptors.response.use(
 
       return axios
         .patch(
-          "https://api-dmsystem.herokuapp.com/api/v1/users/verifyRefreshToken",
-          {
+          "https://api-dmsystem.herokuapp.com/api/v1/users/verifyRefreshToken", {
             refreshToken: localStorage.getItem("refreshToken"),
           }
         )

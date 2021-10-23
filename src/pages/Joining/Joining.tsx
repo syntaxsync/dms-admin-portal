@@ -13,6 +13,8 @@ import {
   Button,
   Transfer,
   Upload,
+  Space,
+  Empty,
 } from "antd";
 import { AuthContext } from "../../App";
 import api from "../../services/api/api";
@@ -53,15 +55,29 @@ const Joining: FunctionComponent<JoiningProps> = () => {
   };
 
   const onFinish = catchAsync(
-    async ({ courses, degree, semester, batch, challanPhoto }) => {
-      console.log(courses, degree, semester, batch, challanPhoto);
-      // const { data: response } = await api.post(`/degrees/${degree}/joinings`);
+    async ({ courses, semester, batch, challanPhoto }) => {
+      console.log(courses, semester, batch, challanPhoto.file);
+
+      const formData = new FormData();
+
+      formData.append("courses", courses);
+      formData.append("batch", batch);
+      formData.append("semester", semester);
+      formData.append("challanPhoto", challanPhoto.file.originFileObj);
+
+      await api.post(`/degrees/${offerings.degree._id}/joinings`, formData);
+
+      message.success(`Joining submitted for semester ${semester}`);
+
+      form.resetFields();
+      setTargetKeys([]);
     }
   );
 
   useEffect(() => {
     const abort = new AbortController();
     const fetchOfferingForDegree = async () => {
+      console.log("khhsdsfds");
       if (user?.data?.type === "student") {
         try {
           const { data: response } = await api.get(
@@ -91,122 +107,132 @@ const Joining: FunctionComponent<JoiningProps> = () => {
       }
     };
 
-    fetchOfferingForDegree();
+    if (CURRENTSEMESTER !== undefined) {
+      fetchOfferingForDegree();
+    }
 
     return () => {
       abort.abort();
     };
   }, [CURRENTSEMESTER, user]);
 
-  const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-
   return (
     <Layout>
       <Content>
-        <Title level={2}>Join Courses</Title>
+        <Space direction="vertical" style={{ width: "100%" }}>
+          <Title level={2}>Join Courses</Title>
 
-        <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            name="degree"
-            label="Degree"
-            initialValue={
-              user.data.type === "student" && user.data.degree.title
-            }
-            rules={[{ required: true, message: "Degree is required" }]}
-          >
-            <Input
-              value={user.data.type === "student" && user.data.degree._id}
-              disabled
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="semester"
-            label="Semester"
-            initialValue={offerings?.semester}
-            rules={[{ required: true, message: "Semester is required" }]}
-          >
-            <Input value={offerings?.semester} disabled />
-          </Form.Item>
-
-          <Form.Item
-            name="batch"
-            label="Batch"
-            rules={[{ required: true, message: "Batch is required" }]}
-            initialValue={offerings?.batch}
-          >
-            <Input disabled />
-          </Form.Item>
-
-          <Form.Item
-            name="challanPhoto"
-            label="Fee Challan Image"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-          >
-            <Dragger
-              action="/upload.do"
-              listType="picture"
-              accept="image/png,image/jpeg,image/jpg"
+          {!CURRENTSEMESTER ? (
+            <Empty description={<h3>Semester Joining Closed</h3>} />
+          ) : (
+            <Form
+              onReset={() => setTargetKeys([])}
+              form={form}
+              layout="vertical"
+              onFinish={onFinish}
             >
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-hint">
-                Support for a single upload. Upload Submitted Fee Challan Image.
-              </p>
-              <p className="ant-upload-text">
-                Click or drag file to this area to upload
-              </p>
-            </Dragger>
-          </Form.Item>
+              <Form.Item
+                name="degree"
+                label="Degree"
+                initialValue={
+                  user.data.type === "student" && user.data.degree.title
+                }
+                rules={[{ required: true, message: "Degree is required" }]}
+              >
+                <Input
+                  value={user.data.type === "student" && user.data.degree._id}
+                  disabled
+                />
+              </Form.Item>
 
-          <Form.Item
-            name="creditHours"
-            label="Credit Hours"
-            initialValue={0}
-            rules={[
-              {
-                required: true,
-                message: "Credit Hours must be greater than 0",
-                type: "number",
-                min: 3,
-              },
-            ]}
-          >
-            <Input disabled />
-          </Form.Item>
+              <Form.Item
+                name="semester"
+                label="Semester"
+                initialValue={offerings?.semester}
+                rules={[{ required: true, message: "Semester is required" }]}
+              >
+                <Input value={offerings?.semester} disabled />
+              </Form.Item>
 
-          <Form.Item
-            name="courses"
-            label="Courses"
-            rules={[{ required: true, message: "Courses is required" }]}
-          >
-            <Transfer
-              listStyle={{ flexBasis: "calc(50% - 20px)" }}
-              dataSource={offerings?.courses.map((course) => ({
-                ...course,
-                key: course._id,
-              }))}
-              titles={["Offered Courses", "Selected Courses"]}
-              targetKeys={targetKeys}
-              onChange={onChange}
-              render={(item) => {
-                return <span key={item.key}>{item.title}</span>;
-              }}
-              oneWay
-            />
-          </Form.Item>
+              <Form.Item
+                name="batch"
+                label="Batch"
+                rules={[{ required: true, message: "Batch is required" }]}
+                initialValue={offerings?.batch}
+              >
+                <Input disabled />
+              </Form.Item>
 
-          <Form.Item>
-            <Button htmlType="submit">Add Joining</Button>
-          </Form.Item>
-        </Form>
+              <Form.Item
+                name="challanPhoto"
+                label="Fee Challan Image"
+                valuePropName="file"
+              >
+                <Dragger
+                  multiple={false}
+                  listType="picture"
+                  accept="image/png,image/jpeg,image/jpg"
+                  maxCount={1}
+                >
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                  </p>
+                  <p className="ant-upload-hint">
+                    Support for a single upload. Upload Submitted Fee Challan
+                    Image.
+                  </p>
+                  <p className="ant-upload-text">
+                    Click or drag file to this area to upload
+                  </p>
+                </Dragger>
+              </Form.Item>
+
+              <Form.Item
+                name="creditHours"
+                label="Credit Hours"
+                initialValue={0}
+                rules={[
+                  {
+                    required: true,
+                    message: "Credit Hours must be greater than 0",
+                    type: "number",
+                    min: 3,
+                  },
+                ]}
+              >
+                <Input disabled />
+              </Form.Item>
+
+              <Form.Item
+                name="courses"
+                label="Courses"
+                rules={[{ required: true, message: "Courses is required" }]}
+              >
+                <Transfer
+                  listStyle={{ flexBasis: "calc(50% - 20px)" }}
+                  dataSource={offerings?.courses.map((course) => ({
+                    ...course,
+                    key: course._id,
+                  }))}
+                  titles={["Offered Courses", "Selected Courses"]}
+                  targetKeys={targetKeys}
+                  onChange={onChange}
+                  render={(item) => {
+                    return <span key={item.key}>{item.title}</span>;
+                  }}
+                  oneWay
+                />
+              </Form.Item>
+
+              <Form.Item>
+                <Space>
+                  <Button htmlType="submit">Add Joining</Button>
+                  <Button htmlType="reset">Reset</Button>
+                </Space>
+              </Form.Item>
+            </Form>
+          )}
+        </Space>
       </Content>
     </Layout>
   );
