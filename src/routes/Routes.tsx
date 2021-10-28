@@ -23,6 +23,7 @@ import Offerings from "../pages/Offerings/Offerings";
 import DetailsOffering from "../pages/Offerings/DetailsOfferings";
 import AddOfferings from "../pages/Offerings/AddOfferings";
 import ManageJoinings from "../pages/ManageJoinings/ManageJoinings";
+import ViewJoinings from "../pages/ViewJoinings/ViewJoinings";
 
 const RouterConfig = () => {
   return (
@@ -56,6 +57,15 @@ const RouterConfig = () => {
                   allowedRoles={["student"]}
                   role={user?.role}
                   Component={<Joining />}
+                  redirectTo="/login"
+                />
+
+                <PrivateRoute
+                  isAuth={isAuth}
+                  path="view-joinings"
+                  allowedRoles={["student"]}
+                  role={user?.role}
+                  Component={<ViewJoinings />}
                   redirectTo="/login"
                 />
 

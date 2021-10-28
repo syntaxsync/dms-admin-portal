@@ -5,6 +5,7 @@ import {
   Input,
   Layout,
   message,
+  Space,
   Transfer,
   Typography,
 } from "antd";
@@ -89,10 +90,9 @@ const CreateNewDegree: FunctionComponent<CreateNewDegreeProps> = () => {
           Add New Degree
         </Title>
         <Form
+          layout="vertical"
           form={form}
           onFinish={onSubmit}
-          labelCol={{ xs: { span: 8 } }}
-          wrapperCol={{ xs: { span: 16 } }}
           labelAlign="left"
         >
           <Form.Item
@@ -138,10 +138,13 @@ const CreateNewDegree: FunctionComponent<CreateNewDegreeProps> = () => {
           <Form.Item name="creditHours" label="Credit Hours">
             <Input type="number" disabled />
           </Form.Item>
-          <Form.Item wrapperCol={{ xs: { offset: 8, span: 16 } }}>
-            <Button type={"primary"} htmlType="submit">
-              Add New Degree
-            </Button>
+          <Form.Item>
+            <Space direction="horizontal">
+              <Button type={"primary"} htmlType="submit">
+                Add New Degree
+              </Button>
+              <Button htmlType="reset">Reset</Button>
+            </Space>
           </Form.Item>
         </Form>
       </Content>

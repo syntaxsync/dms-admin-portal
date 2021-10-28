@@ -1,5 +1,5 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { Typography, Select, Spin, Table, TableColumnsType } from "antd";
+import { Typography, Select, Spin, Table, TableColumnsType, Space } from "antd";
 import React, { useState, useEffect, FunctionComponent } from "react";
 import { NavLink as Link } from "react-router-dom";
 
@@ -77,24 +77,26 @@ const Offerings: FunctionComponent<OfferingsProps> = () => {
 
   return (
     <Spin indicator={<LoadingOutlined />} spinning={loading}>
-      <Title level={2}>Offerings</Title>
-      <Select
-        placeholder="Please Select the Degree to view Offerings"
-        onSelect={handleDegreeChange}
-        style={{ width: "50%" }}
-      >
-        {degreeByDepartments.map((department) => (
-          <OptGroup key={department._id} label={department.name}>
-            {department?.degrees.map((degree) => (
-              <Option key={degree._id} value={degree._id}>
-                {degree.title}
-              </Option>
-            ))}
-          </OptGroup>
-        ))}
-      </Select>
+      <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+        <Title level={2}>Offerings</Title>
+        <Select
+          placeholder="Please Select the Degree to view Offerings"
+          onSelect={handleDegreeChange}
+          style={{ width: "50%" }}
+        >
+          {degreeByDepartments.map((department) => (
+            <OptGroup key={department._id} label={department.name}>
+              {department?.degrees.map((degree) => (
+                <Option key={degree._id} value={degree._id}>
+                  {degree.title}
+                </Option>
+              ))}
+            </OptGroup>
+          ))}
+        </Select>
 
-      <Table columns={columns} dataSource={offerings} />
+        <Table columns={columns} dataSource={offerings} />
+      </Space>
     </Spin>
   );
 };

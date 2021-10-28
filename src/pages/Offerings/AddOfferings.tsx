@@ -62,7 +62,7 @@ const AddOfferings: FunctionComponent<AddOfferingsProps> = () => {
   });
 
   return (
-    <Space direction="vertical">
+    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
       <Title level={2}>Create New Offering</Title>
 
       <Form onFinish={onFinish} form={form} layout="vertical">

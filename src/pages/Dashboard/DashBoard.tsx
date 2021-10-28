@@ -98,28 +98,27 @@ const Dashboard: React.SFC<DashboardProps> = () => {
                     icon={<UserOutlined />}
                     title="Student Info"
                   >
-                    <Menu.Item key="1">
+                    <Menu.Item key="my-degree">
                       <Link to="my-degree">My Degree</Link>
                     </Menu.Item>
-                    <Menu.Item key="2">
-                      <Link to="join-courses">My Courses</Link>
-                    </Menu.Item>
-                  </SubMenu>
-                  <SubMenu key="sub2" icon={<LaptopOutlined />} title="Result">
-                    <Menu.Item key="5">option5</Menu.Item>
-                    <Menu.Item key="6">option6</Menu.Item>
-                    <Menu.Item key="7">option7</Menu.Item>
-                    <Menu.Item key="8">option8</Menu.Item>
                   </SubMenu>
                   <SubMenu
                     key="sub3"
                     icon={<NotificationOutlined />}
-                    title="Courses"
+                    title="Join Courses"
                   >
-                    <Menu.Item key="9">option9</Menu.Item>
-                    <Menu.Item key="10">option10</Menu.Item>
-                    <Menu.Item key="11">option11</Menu.Item>
-                    <Menu.Item key="12">option12</Menu.Item>
+                    <Menu.Item key="join-courses">
+                      <Link to="join-courses">Join new semester</Link>
+                    </Menu.Item>
+                  </SubMenu>
+                  <SubMenu
+                    key="sub2"
+                    icon={<LaptopOutlined />}
+                    title="Joined Courses"
+                  >
+                    <Menu.Item key="view-joinings">
+                      <Link to="view-joinings">My Joinings</Link>
+                    </Menu.Item>
                   </SubMenu>
                 </Menu>
               );

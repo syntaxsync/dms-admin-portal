@@ -52,12 +52,7 @@ const AddNewDepartment: FunctionComponent<AddNewDepartmentProps> = () => {
         <Title style={{ textAlign: "center" }} level={2}>
           Add New Department
         </Title>
-        <Form
-          form={form}
-          onFinish={onFinsih}
-          labelCol={{ xs: { span: 8 } }}
-          wrapperCol={{ xs: { span: 16 } }}
-        >
+        <Form form={form} onFinish={onFinsih} layout="vertical">
           <Form.Item
             name="name"
             label="Department Name"
@@ -98,14 +93,12 @@ const AddNewDepartment: FunctionComponent<AddNewDepartmentProps> = () => {
               oneWay
             />
           </Form.Item>
-          <Form.Item wrapperCol={{ xs: { offset: 8 } }}>
+          <Form.Item>
             <Space>
               <Button type="primary" htmlType="submit">
-                Add
+                Submit
               </Button>
-              <Button type="primary" htmlType="reset">
-                Reset
-              </Button>
+              <Button htmlType="reset">Reset</Button>
             </Space>
           </Form.Item>
         </Form>
