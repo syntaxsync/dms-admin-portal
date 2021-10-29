@@ -194,13 +194,13 @@ const Joining: FunctionComponent<JoiningProps> = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Credit Hours must be greater than 0",
+                    message: "Credit Hour greater than 0 and less than 20",
                     type: "number",
                     min: 3,
                   },
                   {
                     max: 20,
-                    message: "Credit Hour will be less than or equal to 20",
+                    message: "Credit Hour greater than 0 and less than 20",
                   },
                 ]}
               >
