@@ -197,6 +197,7 @@ const Joining: FunctionComponent<JoiningProps> = () => {
                     message: "Credit Hours must be greater than 0",
                     type: "number",
                     min: 3,
+                    max:20
                   },
                 ]}
               >
